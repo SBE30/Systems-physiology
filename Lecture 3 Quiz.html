@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lecture 3 Quiz</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#14231e;--mut:#5d6e68;--line:#d4ddd9;--acc:#0f766e;--ok:#15803d;--okb:#dcfce7;--bad:#b91c1c;--badb:#fee2e2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1714;--card:#17241f;--ink:#e8f1ed;--mut:#9fb2ab;--line:#2c3f38;--acc:#2dd4bf;--ok:#4ade80;--okb:#12351f;--bad:#f87171;--badb:#3b1616}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif;min-height:100%}
+main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:30px;line-height:1.15;margin:8px 0 6px}
+p{margin:0 0 12px}.mut{color:var(--mut);font-size:14px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{display:block;width:100%;padding:14px 16px;margin:10px 0;border-radius:12px;border:2px solid var(--acc);background:var(--card);text-align:left}
+.btn b{display:block}.btn.main{background:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.main{color:#06201c}}
+:root[data-theme="dark"] .btn.main{color:#06201c}
+.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin:8px 0 14px}
+.bar i{display:block;height:100%;background:var(--acc);transition:width .3s}
+.top{display:flex;justify-content:space-between;font-size:14px;color:var(--mut)}
+.tag{display:inline-block;font-size:13px;color:var(--acc);margin-bottom:6px}
+.q{font-size:20px;line-height:1.35;margin:4px 0 16px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;padding:13px 14px;margin:8px 0;background:var(--card);border:2px solid var(--line);border-radius:12px}
+.opt span{font-weight:700;color:var(--acc);min-width:18px}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.opt.ok{border-color:var(--ok);background:var(--okb)}.opt.no{border-color:var(--bad);background:var(--badb)}
+.opt[disabled]{cursor:default}
+.fb{padding:12px 14px;border-radius:12px;background:var(--card);border:2px solid var(--line);margin:12px 0}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--bad)}
+.big{font-size:56px;font-weight:700;color:var(--acc);margin:6px 0 0;line-height:1}
+.row{display:flex;align-items:center;gap:10px;font-size:14px;margin:6px 0}
+.row .bar{flex:1;margin:0}.row div:first-child{width:46%}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style></head><body><main id="app"></main>
+<script>
+var Q=[["Proprioceptors in muscles, tendons and joints report…", ["Body position and movement", "Blood pressure", "Fluid balance", "Hormone levels"], "They support coordination and balance."], ["Baroreceptors in the carotid arteries and aortic arch detect…", ["Blood-pressure changes", "Light", "Osmotic pressure", "Pain"], "They support homeostasis."], ["Nociceptors respond to…", ["Painful stimuli, alerting the body to harm", "Blood pressure", "Osmotic pressure", "Light"], "They warn of injury."], ["Osmoreceptors in the CNS regulate…", ["Fluid balance and osmotic pressure", "Heart rate", "Pain", "Balance"], "They keep osmotic pressure in a narrow range."], ["Visceral receptors in internal organs sense…", ["Stretch, pressure and pain", "Light", "Sound", "Body position only"], "They help regulate organ function."], ["The first of the seven steps from stimulus to perception is…", ["Transduction", "Relay", "Propagation", "Integration"], "The receptor converts the stimulus into electrical signals."], ["Mechanical deformation excites a receptor by…", ["Opening stretch-activated ion channels", "Closing all channels", "Blocking Na⁺", "Releasing hormones"], "Stretching the membrane opens mechanically activated channels."], ["A stronger stimulus produces…", ["A larger receptor potential and higher firing rate", "A larger action potential", "A longer action potential", "No change"], "Intensity is coded by firing rate."], ["Visual signals are processed in which cortex?", ["Occipital (visual cortex)", "Temporal", "Frontal", "Cerebellar"], "Auditory cortex is temporal."], ["Case: A pressure sensor in the sole of the foot sends data to the brain. Which pathway?", ["Sensory (afferent)", "Motor (efferent)", "Autonomic", "Actuator"], "Receptor-to-CNS signals are afferent."], ["At resting potential…", ["A few K⁺ channels are open and the potential is constant", "All Na⁺ channels are open", "Voltage reverses", "Na⁺ rushes in"], "Resting K⁺ channels set the resting potential."], ["The rising phase is caused by…", ["Na⁺ rushing in through voltage-gated channels", "K⁺ leaving the cell", "Cl⁻ entering", "Pump inactivation only"], "At threshold more voltage-gated Na⁺ channels open."], ["In the falling phase…", ["Na⁺ channels close and K⁺ channels open", "Na⁺ rushes in", "All channels close", "Cl⁻ enters"], "K⁺ leaves and the potential returns toward rest."], ["The undershoot occurs because…", ["More K⁺ channels are open than at rest", "Na⁺ channels stay open", "The pump stops", "Myelin fails"], "The membrane repolarizes beyond resting potential."], ["The absolute refractory period (about 1–2 ms) exists because…", ["Voltage-gated Na⁺ channels are inactivated", "K⁺ channels are all closed", "The pump is off", "Myelin is absent"], "It keeps spikes discrete and one-directional."], ["Where is the trigger zone of a neuron?", ["Axon hillock and initial segment", "Dendrite tips", "Axon terminals", "Node of Ranvier only"], "It has a high density of voltage-gated Na⁺ channels."], ["“All-or-none” means…", ["At threshold the spike has fixed amplitude; below threshold nothing", "Bigger stimulus gives bigger spike", "Spikes fade over distance", "Spikes travel both ways"], "Intensity is coded by rate, not amplitude."], ["Stimulus intensity is coded by…", ["Firing rate of action potentials", "Spike amplitude", "Spike duration", "Axon length"], "Spikes are all-or-none, so frequency carries intensity."], ["Case: A researcher wants to record electrical activity of muscles. Which technique?", ["EMG", "ECG", "EEG", "fMRI"], "EMG records muscle activity; ECG heart; EEG brain."], ["Case: Neural signals are used to control assistive devices such as artificial limbs. This is…", ["Neuroprosthetics", "A pacemaker", "Nerve conduction study", "Skin temperature sensing"], "Neuroprosthetics and BCIs use neural signals to control devices."], ["The connective tissue around each individual axon is the…", ["Endoneurium", "Perineurium", "Epineurium", "Myelin"], "Perineurium wraps fascicles; epineurium wraps the whole nerve."], ["In myelinated axons the action potential…", ["Jumps between nodes of Ranvier (saltatory)", "Moves continuously along the axon", "Cannot regenerate", "Moves backward"], "Currents occur at nodes where Na⁺ channels are concentrated."], ["Which factors increase conduction velocity?", ["Myelin, larger diameter and warmth", "Unmyelinated, thin, cold", "Short axons", "Fewer ions"], "Warmer means faster pump enzymes and conduction."], ["Case: A patient has demyelination, and conduction studies show much slower velocity. Why?", ["Loss of myelin removes saltatory conduction", "Warmer axons", "Larger axon diameter", "More nodes of Ranvier"], "Myelinated fibres conduct faster."], ["Case: A nerve conduction study on a cold hand shows slower velocity. Why?", ["Lower temperature slows Na⁺/K⁺ pump enzymes and conduction", "Cold increases myelin", "Cold enlarges the axon", "Cold adds nodes"], "Warmer means faster conduction."], ["An afferent fibre carries information…", ["Toward the CNS", "Away from the CNS", "Only to muscles", "Only to blood vessels"], "Afferent = toward; efferent = away."], ["Which nerve information type produces fight-or-flight and calming responses?", ["Autonomic", "Motor (somatic)", "Sensory", "Proprioceptive"], "Autonomic nerves control organs automatically."], ["Case: A prosthetic hand must receive commands from the nervous system to move its motors. Which information is involved?", ["Motor information for actuation", "Sensory information from skin", "Visual information", "Autonomic vessel control"], "Actuation signals are motor (efferent)."], ["Case: An FES system activates a leg muscle through a motor nerve. The signal acts like…", ["Motor/actuation information", "Sensory stimulus", "Afferent information", "Visual information"], "The stimulation travels away from the CNS toward the muscle."], ["Case: During stress heart rate rises and blood vessel activity changes. Which control?", ["Autonomic", "Somatic motor", "Afferent sensory", "Proprioceptive"], "The ANS adjusts involuntary functions."]];
+var T=["Receptor types", "Stimulus to signal", "Action potential phases", "Spike properties & uses", "Nerves & conduction", "Afferent vs efferent"];
+function tp(i){return Math.floor(i/5)}
+function cs(i){return Q[i][0].indexOf("Case:")==0}
+var app=document.getElementById("app"),S={},missed=[];
+function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function home(){S={};
+app.innerHTML='<h1>Lecture 3 quiz</h1><p class="mut">'+Q.length+' questions on receptors, the action potential, nerves and conduction, with case studies. Answer, get instant feedback, build a streak.</p>'
++'<button class="btn main" onclick="go(10)"><b>Quick round</b>10 random questions</button>'
++'<button class="btn" onclick="go(\'c\')"><b>Case studies</b>Scenario questions only</button>'
++'<button class="btn" onclick="go(30)"><b>Full run</b>All '+Q.length+', shuffled</button>'
++(missed.length?'<button class="btn" onclick="go(0)"><b>Weak spots</b>Retry the '+missed.length+' you missed</button>':'')
++T.map(function(t,k){return '<button class="btn" onclick="go(-'+(k+1)+')"><b>'+t+'</b>One topic only</button>'}).join("");}
+function go(n){var ids=[];for(var i=0;i<Q.length;i++)ids.push(i);
+if(n===0)ids=missed.slice();else if(n==="c")ids=ids.filter(cs);else if(n<0)ids=ids.filter(function(i){return tp(i)===-n-1});
+ids=sh(ids);if(n>0)ids=ids.slice(0,n);
+S={ids:ids,p:0,sc:0,st:0,best:0,miss:[],tt:{}};show();}
+function show(){if(S.p>=S.ids.length)return end();
+var i=S.ids[S.p],q=Q[i],o=sh([0,1,2,3]);S.cur={i:i,o:o,a:false};var L="ABCD",c=cs(i);
+var txt=q[0].replace("Case: ","");
+app.innerHTML='<div class="top"><span>Question '+(S.p+1)+' of '+S.ids.length+'</span><span>'+(S.st>1?S.st+' in a row 🔥':'Score '+S.sc)+'</span></div>'
++'<div class="bar"><i style="width:'+(S.p/S.ids.length*100)+'%"></i></div>'
++'<div class="tag">'+T[tp(i)]+(c?' · Case study':'')+'</div><p class="q">'+txt+'</p>'
++o.map(function(k,n){return '<button class="opt" onclick="pick('+n+')"><span>'+L[n]+'</span>'+q[1][k]+'</button>'}).join("")+'<div id="fb"></div>';}
+function pick(n){var c=S.cur;if(c.a)return;c.a=true;var q=Q[c.i],ok=c.o[n]===0,b=app.querySelectorAll(".opt"),t=tp(c.i);
+S.tt[t]=S.tt[t]||[0,0];S.tt[t][1]++;
+b.forEach(function(x,k){x.disabled=true;if(c.o[k]===0)x.classList.add("ok");else if(k===n)x.classList.add("no")});
+if(ok){S.sc++;S.st++;S.tt[t][0]++;if(S.st>S.best)S.best=S.st}else{S.st=0;S.miss.push(c.i)}
+var m=ok?(S.st>=5?"Unstoppable! ":S.st>=3?"Streak! ":"Correct! "):"Not quite. ";
+document.getElementById("fb").innerHTML='<div class="fb '+(ok?"ok":"no")+'"><b>'+m+'</b>'+q[2]+'</div><button class="btn main" id="nx" style="text-align:center" onclick="S.p++;show()">'+(S.p+1>=S.ids.length?"See results":"Next question")+'</button>';
+document.getElementById("nx").focus();}
+function end(){var n=S.ids.length,pc=Math.round(S.sc/n*100);missed=S.miss.slice();
+var r=pc>=90?"Physiology pro 🧠":pc>=70?"Strong signal":pc>=50?"Getting there":"Back to the slides";
+app.innerHTML='<p class="mut">Round complete</p><div class="big">'+S.sc+'/'+n+'</div><h1>'+r+'</h1><p class="mut">Best streak: '+S.best+' in a row</p>'
++Object.keys(S.tt).map(function(k){var v=S.tt[k];return '<div class="row"><div>'+T[k]+'</div><div class="bar"><i style="width:'+(v[0]/v[1]*100)+'%"></i></div><div>'+v[0]+'/'+v[1]+'</div></div>'}).join("")
++(missed.length?'<button class="btn main" style="text-align:center" onclick="go(0)">Retry '+missed.length+' missed</button>':'<p><b>Perfect round, nothing to review.</b></p>')
++'<button class="btn" style="text-align:center" onclick="home()">Back to menu</button>';}
+document.addEventListener("keydown",function(e){if(!S.cur||S.p>=S.ids.length)return;var k="1234abcd".indexOf(e.key.toLowerCase());if(k>-1&&!S.cur.a)pick(k%4)});
+home();
+</script></body></html>

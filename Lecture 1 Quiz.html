@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lecture 1 Quiz</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#14231e;--mut:#5d6e68;--line:#d4ddd9;--acc:#0f766e;--ok:#15803d;--okb:#dcfce7;--bad:#b91c1c;--badb:#fee2e2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1714;--card:#17241f;--ink:#e8f1ed;--mut:#9fb2ab;--line:#2c3f38;--acc:#2dd4bf;--ok:#4ade80;--okb:#12351f;--bad:#f87171;--badb:#3b1616}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif;min-height:100%}
+main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:30px;line-height:1.15;margin:8px 0 6px}
+p{margin:0 0 12px}.mut{color:var(--mut);font-size:14px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{display:block;width:100%;padding:14px 16px;margin:10px 0;border-radius:12px;border:2px solid var(--acc);background:var(--card);text-align:left}
+.btn b{display:block}.btn.main{background:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.main{color:#06201c}}
+:root[data-theme="dark"] .btn.main{color:#06201c}
+.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin:8px 0 14px}
+.bar i{display:block;height:100%;background:var(--acc);transition:width .3s}
+.top{display:flex;justify-content:space-between;font-size:14px;color:var(--mut)}
+.tag{display:inline-block;font-size:13px;color:var(--acc);margin-bottom:6px}
+.q{font-size:20px;line-height:1.35;margin:4px 0 16px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;padding:13px 14px;margin:8px 0;background:var(--card);border:2px solid var(--line);border-radius:12px}
+.opt span{font-weight:700;color:var(--acc);min-width:18px}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.opt.ok{border-color:var(--ok);background:var(--okb)}.opt.no{border-color:var(--bad);background:var(--badb)}
+.opt[disabled]{cursor:default}
+.fb{padding:12px 14px;border-radius:12px;background:var(--card);border:2px solid var(--line);margin:12px 0}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--bad)}
+.big{font-size:56px;font-weight:700;color:var(--acc);margin:6px 0 0;line-height:1}
+.row{display:flex;align-items:center;gap:10px;font-size:14px;margin:6px 0}
+.row .bar{flex:1;margin:0}.row div:first-child{width:46%}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style></head><body><main id="app"></main>
+<script>
+var Q=[["Which topic follows the Introduction in the course outline?", ["Nervous system", "Renal system", "Respiratory system", "Cardiovascular system"], "Outline: Introduction, Nervous system, Muscle, Cardiovascular, Respiratory, Renal."], ["Which skill is part of the course learning outcomes?", ["Interpret physiological data, predict outcomes of system dysfunction and solve problems", "Perform surgery", "Design drugs chemically", "Memorize anatomy only"], "LO 4 is about interpretation, prediction and problem solving."], ["What is the weight of the final-term exam in the assessment (out of 100)?", ["50", "20", "16", "10"], "Mid-term 20, two quizzes 16, class work 4, project 10, final 50."], ["Dialysis and artificial organs fit which role of physiology for a biomedical engineer?", ["Replace", "Measure", "Model", "Design only"], "Replace: artificial organs, dialysis, assistive technologies."], ["Case: A team builds a wearable ECG and imaging tools. Which role of physiology applies?", ["Measure", "Replace", "Deliver", "Model"], "Measure: biosensors, ECG, EEG, imaging."], ["What is a system?", ["A collection of procedures or activities working together to achieve a common goal", "A single organ", "One cell type", "A chemical reaction"], "Systems combine parts to reach a shared objective."], ["Human physiology is the…", ["Integrated study of the normal function of the human body", "Study of disease only", "Study of bones", "Study of drugs"], "Parts can be described separately but work together."], ["Which is the correct order of levels from smallest to largest?", ["Chemical → cellular → tissue → organ → organ system → organism", "Cellular → chemical → organ → tissue", "Organ → tissue → cell → chemical", "Organism → organ system → cell"], "This is the lecture’s levels-of-organization order."], ["A group of organs serving a well-defined function is a(n)…", ["Organ system", "Tissue", "Cell", "Chemical level"], "Example: the cardiovascular system."], ["Case: The stomach contains several tissue types working together. Which level is the stomach?", ["Organ level", "Tissue level", "Cellular level", "Organism level"], "Organs are made of tissues."], ["Which is the organizational unit of life?", ["The cell", "The tissue", "The organ", "The gene only"], "Cells are the first core principle."], ["Which is a central theme of physiology?", ["Homeostasis", "Mutation", "Random variation", "Rigid constancy"], "Homeostasis is a central theme."], ["Our evolutionary pedigree is revealed in…", ["Our genome", "Our bones only", "Our hormones", "Our reflexes"], "Core principle: we evolved from prior life forms."], ["Physiological systems transform matter and energy while obeying…", ["Conservation laws", "No rules", "Only chemical laws", "Only electrical laws"], "Matter and energy are conserved."], ["Control systems in the body use…", ["Negative and positive feedback, anticipatory and threshold mechanisms", "Only negative feedback", "Only reflexes", "Only hormones"], "Four mechanisms are listed."], ["Temperature regulation is an example of…", ["Negative feedback", "Positive feedback", "Threshold only", "No feedback"], "Negative feedback reduces output or activity to maintain homeostasis."], ["Childbirth contractions illustrate…", ["Positive feedback", "Negative feedback", "Homeostasis by set point", "Diffusion"], "Positive feedback amplifies the process."], ["Negative feedback…", ["Reduces deviation from the set point", "Amplifies change", "Ignores the set point", "Ends homeostasis"], "It stabilizes a variable."], ["Case: After a meal blood glucose rises, then insulin acts to lower it. This is…", ["Negative feedback", "Positive feedback", "Osmosis", "Diffusion"], "The response opposes the deviation."], ["Case: Labour contractions intensify as oxytocin is released, and this continues until birth. This is…", ["Positive feedback", "Negative feedback", "A set-point loop", "Facilitated diffusion"], "The change is amplified until an end event."], ["Net diffusion of a solute occurs…", ["Down its concentration gradient", "Against its gradient", "Only with ATP", "Only through pumps"], "Molecules move from high to low concentration."], ["At steady state in diffusion…", ["There is no net diffusion", "Diffusion stops entirely, so molecules stop moving", "The gradient grows", "Flux is maximal"], "Net flux is zero even if molecules still move."], ["Osmosis is the net diffusion of…", ["Water toward higher solute concentration", "Solute toward lower solute", "Water toward lower solute", "Ions by pumps"], "Water moves down its own concentration gradient."], ["Facilitated diffusion moves a substance…", ["From high to low concentration", "From low to high concentration", "Using ATP directly", "Only as vesicles"], "It is passive, with carriers or channels."], ["Case: Compartment A has more non-penetrating solute than B, separated by a semipermeable membrane. Water moves…", ["From B to A", "From A to B", "Neither way", "Only if ATP is present"], "Water follows higher solute concentration."], ["The general mass balance for body mass is…", ["ΔM = Min − Mout", "ΔM = Min + Mout", "ΔM = Min × Mout", "ΔM = Mout − Min"], "Accumulation = input − output."], ["If ΔM is greater than zero, the body…", ["Stores mass (gains weight)", "Loses mass", "Is in homeostasis", "Dies"], "Input exceeds output."], ["If ΔM equals zero…", ["Inputs equal outputs (homeostasis)", "The body gains weight", "The body loses weight", "Feedback fails"], "Balance means no net change in mass."], ["Case: A patient takes in 2.5 L of water and loses 2.8 L through urine, sweat and breathing. ΔM is…", ["−0.3 L (net loss)", "+0.3 L (net gain)", "0 L", "+5.3 L"], "2.5 − 2.8 = −0.3 L."], ["Coordinated command and control requires…", ["Signalling at all levels of organization", "Only nerves", "Only hormones", "No communication"], "This is a core principle."]];
+var T=["Course & why physiology", "Systems & levels", "Core principles", "Homeostasis & feedback", "Diffusion & osmosis", "Mass balance & signalling"];
+function tp(i){return Math.floor(i/5)}
+function cs(i){return Q[i][0].indexOf("Case:")==0}
+var app=document.getElementById("app"),S={},missed=[];
+function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function home(){S={};
+app.innerHTML='<h1>Lecture 1 quiz</h1><p class="mut">'+Q.length+' questions on systems physiology, levels of organization, core principles, feedback and diffusion basics, with case studies. Answer, get instant feedback, build a streak.</p>'
++'<button class="btn main" onclick="go(10)"><b>Quick round</b>10 random questions</button>'
++'<button class="btn" onclick="go(\'c\')"><b>Case studies</b>Scenario questions only</button>'
++'<button class="btn" onclick="go(30)"><b>Full run</b>All '+Q.length+', shuffled</button>'
++(missed.length?'<button class="btn" onclick="go(0)"><b>Weak spots</b>Retry the '+missed.length+' you missed</button>':'')
++T.map(function(t,k){return '<button class="btn" onclick="go(-'+(k+1)+')"><b>'+t+'</b>One topic only</button>'}).join("");}
+function go(n){var ids=[];for(var i=0;i<Q.length;i++)ids.push(i);
+if(n===0)ids=missed.slice();else if(n==="c")ids=ids.filter(cs);else if(n<0)ids=ids.filter(function(i){return tp(i)===-n-1});
+ids=sh(ids);if(n>0)ids=ids.slice(0,n);
+S={ids:ids,p:0,sc:0,st:0,best:0,miss:[],tt:{}};show();}
+function show(){if(S.p>=S.ids.length)return end();
+var i=S.ids[S.p],q=Q[i],o=sh([0,1,2,3]);S.cur={i:i,o:o,a:false};var L="ABCD",c=cs(i);
+var txt=q[0].replace("Case: ","");
+app.innerHTML='<div class="top"><span>Question '+(S.p+1)+' of '+S.ids.length+'</span><span>'+(S.st>1?S.st+' in a row 🔥':'Score '+S.sc)+'</span></div>'
++'<div class="bar"><i style="width:'+(S.p/S.ids.length*100)+'%"></i></div>'
++'<div class="tag">'+T[tp(i)]+(c?' · Case study':'')+'</div><p class="q">'+txt+'</p>'
++o.map(function(k,n){return '<button class="opt" onclick="pick('+n+')"><span>'+L[n]+'</span>'+q[1][k]+'</button>'}).join("")+'<div id="fb"></div>';}
+function pick(n){var c=S.cur;if(c.a)return;c.a=true;var q=Q[c.i],ok=c.o[n]===0,b=app.querySelectorAll(".opt"),t=tp(c.i);
+S.tt[t]=S.tt[t]||[0,0];S.tt[t][1]++;
+b.forEach(function(x,k){x.disabled=true;if(c.o[k]===0)x.classList.add("ok");else if(k===n)x.classList.add("no")});
+if(ok){S.sc++;S.st++;S.tt[t][0]++;if(S.st>S.best)S.best=S.st}else{S.st=0;S.miss.push(c.i)}
+var m=ok?(S.st>=5?"Unstoppable! ":S.st>=3?"Streak! ":"Correct! "):"Not quite. ";
+document.getElementById("fb").innerHTML='<div class="fb '+(ok?"ok":"no")+'"><b>'+m+'</b>'+q[2]+'</div><button class="btn main" id="nx" style="text-align:center" onclick="S.p++;show()">'+(S.p+1>=S.ids.length?"See results":"Next question")+'</button>';
+document.getElementById("nx").focus();}
+function end(){var n=S.ids.length,pc=Math.round(S.sc/n*100);missed=S.miss.slice();
+var r=pc>=90?"Physiology pro 🧠":pc>=70?"Strong signal":pc>=50?"Getting there":"Back to the slides";
+app.innerHTML='<p class="mut">Round complete</p><div class="big">'+S.sc+'/'+n+'</div><h1>'+r+'</h1><p class="mut">Best streak: '+S.best+' in a row</p>'
++Object.keys(S.tt).map(function(k){var v=S.tt[k];return '<div class="row"><div>'+T[k]+'</div><div class="bar"><i style="width:'+(v[0]/v[1]*100)+'%"></i></div><div>'+v[0]+'/'+v[1]+'</div></div>'}).join("")
++(missed.length?'<button class="btn main" style="text-align:center" onclick="go(0)">Retry '+missed.length+' missed</button>':'<p><b>Perfect round, nothing to review.</b></p>')
++'<button class="btn" style="text-align:center" onclick="home()">Back to menu</button>';}
+document.addEventListener("keydown",function(e){if(!S.cur||S.p>=S.ids.length)return;var k="1234abcd".indexOf(e.key.toLowerCase());if(k>-1&&!S.cur.a)pick(k%4)});
+home();
+</script></body></html>
