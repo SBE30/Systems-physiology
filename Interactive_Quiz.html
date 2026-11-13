@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Systems Physiology — Interactive 100-Question Quiz</title>
+<style>
+  :root {
+    --bg: #f6f8fa;
+    --surface: #ffffff;
+    --surface-soft: #f0f4f8;
+    --border: #dce3ec;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --primary: #3b6ea5;
+    --primary-soft: #e8f0f8;
+    --primary-hover: #2d5785;
+    --success: #2a7f62;
+    --success-soft: #e6f4ef;
+    --danger: #b84a4a;
+    --danger-soft: #fbeaea;
+    --warning: #a86c25;
+    --warning-soft: #fcf3e6;
+    --radius: 12px;
+    --shadow: 0 2px 10px rgba(30, 41, 59, 0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .header-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .title-block h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .title-block p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .mode-toggle {
+    display: inline-flex;
+    background: var(--surface-soft);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .mode-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .mode-btn.active {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .btn {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    padding: 7px 13px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn:hover { background: var(--surface-soft); }
+  .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+  .btn-success:hover { opacity: 0.92; }
+
+  .container {
+    max-width: 1120px;
+    margin: 22px auto;
+    padding: 0 18px;
+    display: grid;
+    grid-template-columns: 1fr 270px;
+    gap: 22px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+    .sidebar { order: -1; position: static !important; }
+  }
+
+  /* Toolbar */
+  .toolbar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tab {
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tab.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .search-input:focus { border-color: var(--primary); }
+
+  /* Score Summary Banner */
+  .score-banner {
+    display: none;
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .score-banner.visible { display: block; }
+
+  .score-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .score-big {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 10px;
+  }
+
+  .breakdown-item {
+    background: var(--surface-soft);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.83rem;
+  }
+
+  .breakdown-item strong { display: block; color: var(--text); margin-bottom: 2px; }
+
+  /* Question Cards */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    scroll-margin-top: 95px;
+  }
+
+  .q-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  .badge-type {
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .q-text {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.93rem;
+    cursor: pointer;
+    transition: all 0.14s ease;
+  }
+
+  .option-btn:hover:not(.locked) {
+    background: var(--surface-soft);
+    border-color: #b8c6d8;
+  }
+
+  .option-letter {
+    font-weight: 700;
+    min-width: 22px;
+    color: var(--primary);
+  }
+
+  .option-btn.selected {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+  }
+
+  .option-btn.correct {
+    background: var(--success-soft);
+    border-color: var(--success);
+    color: #164e3b;
+  }
+
+  .option-btn.correct .option-letter { color: var(--success); }
+
+  .option-btn.wrong {
+    background: var(--danger-soft);
+    border-color: var(--danger);
+    color: #6b2121;
+  }
+
+  .option-btn.wrong .option-letter { color: var(--danger); }
+
+  .explanation {
+    display: none;
+    margin-top: 12px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    background: var(--surface-soft);
+    border-left: 4px solid var(--primary);
+    font-size: 0.89rem;
+    color: var(--text);
+  }
+
+  .explanation.visible { display: block; }
+  .explanation.exp-correct { border-left-color: var(--success); background: #f2faf7; }
+  .explanation.exp-wrong { border-left-color: var(--danger); background: #fdf5f5; }
+
+  /* Sidebar Navigator */
+  .sidebar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: sticky;
+    top: 90px;
+    box-shadow: var(--shadow);
+  }
+
+  .sidebar h3 {
+    font-size: 0.92rem;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--surface-soft);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
+  .nav-dot {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 6px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .nav-dot:hover { border-color: var(--primary); }
+  .nav-dot.answered { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+  .nav-dot.correct { background: var(--success); border-color: var(--success); color: #fff; }
+  .nav-dot.wrong { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .dot-sample { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="title-block">
+      <h1>Systems Physiology — 100-Question Revision Quiz</h1>
+      <p>MCQ &amp; True/False • Complete Question Bank with Answer Key &amp; Explanations</p>
+    </div>
+    <div class="controls">
+      <div class="mode-toggle" role="group" aria-label="Quiz Mode">
+        <button class="mode-btn active" id="btnStudyMode" onclick="setMode('study')">Study Mode</button>
+        <button class="mode-btn" id="btnExamMode" onclick="setMode('exam')">Exam Mode</button>
+      </div>
+      <button class="btn btn-success" id="btnSubmitExam" onclick="submitExam()" style="display:none;">Submit Exam</button>
+      <button class="btn" id="btnRevealAll" onclick="toggleRevealAll()">Show All Answers</button>
+      <button class="btn" onclick="resetQuiz()">Reset</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <main>
+    <div class="score-banner" id="scoreBanner">
+      <div class="score-top">
+        <div>
+          <div style="font-size:0.85rem;color:var(--text-muted);font-weight:600;">EXAM RESULTS</div>
+          <div class="score-big" id="scoreValue">0 / 100 (0%)</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="filterWrongOnly()">Review Incorrect Only</button>
+          <button class="btn" onclick="resetQuiz()">Retake Quiz</button>
+        </div>
+      </div>
+      <div class="breakdown-grid" id="breakdownGrid"></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="tabs" id="lectureTabs"></div>
+      <div class="filter-row">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search questions by keyword or number (e.g., osmosis, Nernst, 45)..." oninput="renderQuestions()">
+        <select class="btn" id="statusFilter" onchange="renderQuestions()">
+          <option value="all">All Questions</option>
+          <option value="unanswered">Unanswered</option>
+          <option value="wrong">Incorrect Only</option>
+          <option value="correct">Correct Only</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="questionsContainer"></div>
+  </main>
+
+  <aside class="sidebar">
+    <h3>
+      <span>Progress</span>
+      <span id="progressText">0 / 100</span>
+    </h3>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="nav-grid" id="navGrid"></div>
+    <div class="legend">
+      <span><i class="dot-sample" style="background:var(--primary-soft);border:1px solid var(--primary)"></i> Selected</span>
+      <span><i class="dot-sample" style="background:var(--success)"></i> Correct</span>
+      <span><i class="dot-sample" style="background:var(--danger)"></i> Wrong</span>
+    </div>
+  </aside>
+</div>
+
+<script>
+const QUESTIONS = [
+  // Lecture 2: Introduction (1-20)
+  { id: 1, lecture: "Lecture 2: Introduction", type: "MCQ", q: "A person starts exercising. Which sequence best describes how body systems cooperate to meet the increased oxygen demand?", options: [
+    "A. Muscle activity rises → oxygen demand rises → ventilation and cardiac output rise",
+    "B. Cardiac output falls → oxygen demand falls → ventilation stops increasing",
+    "C. Kidney filtration rises → oxygen demand falls → muscle activity stops",
+    "D. Skin receptors activate → oxygen production rises → blood flow becomes unnecessary"
+  ], answer: 0, exp: "The lecture links increased muscle activity with increased O₂ demand, ventilation, cardiac output and oxygen delivery." },
+  { id: 2, lecture: "Lecture 2: Introduction", type: "MCQ", q: "Which statement best describes homeostasis?", options: [
+    "A. Keeping every variable perfectly constant",
+    "B. Maintaining important variables within an appropriate range despite change",
+    "C. Preventing the environment from affecting the body",
+    "D. Returning every physiological process to zero"
+  ], answer: 1, exp: "Homeostasis is dynamic regulation within an appropriate range, not an absence of change." },
+  { id: 3, lecture: "Lecture 2: Introduction", type: "MCQ", q: "A system receives 2.4 kg of input and loses 2.0 kg over a period. According to the mass-balance model, what happens to body mass?", options: [
+    "A. It decreases by 0.4 kg",
+    "B. It remains unchanged",
+    "C. It increases by 0.4 kg",
+    "D. It increases by 4.4 kg"
+  ], answer: 2, exp: "ΔM = input − output = 2.4 − 2.0 = +0.4 kg." },
+  { id: 4, lecture: "Lecture 2: Introduction", type: "MCQ", q: "A rise in body temperature activates responses that promote heat loss. This is an example of:", options: [
+    "A. Positive feedback",
+    "B. Negative feedback",
+    "C. Feedforward without feedback",
+    "D. Vesicular transport"
+  ], answer: 1, exp: "The response opposes the initial deviation and moves temperature toward its regulated range." },
+  { id: 5, lecture: "Lecture 2: Introduction", type: "MCQ", q: "Which event is used in the lecture as an example of positive feedback?", options: [
+    "A. Blood glucose regulation",
+    "B. Temperature regulation",
+    "C. Blood clotting",
+    "D. Resting membrane potential"
+  ], answer: 2, exp: "Platelet activation recruits more platelets, amplifying clot formation until bleeding stops." },
+  { id: 6, lecture: "Lecture 2: Introduction", type: "MCQ", q: "In a feedback system, which component detects a change in the controlled variable?", options: [
+    "A. Effector",
+    "B. Sensor",
+    "C. Actuator",
+    "D. Output"
+  ], answer: 1, exp: "The sensor detects the change and sends information to the controller/integrator." },
+  { id: 7, lecture: "Lecture 2: Introduction", type: "MCQ", q: "Which pair correctly matches a body-fluid compartment with its location?", options: [
+    "A. ICF — outside cells",
+    "B. ECF — inside cells",
+    "C. ICF — inside cells",
+    "D. Plasma — inside cells"
+  ], answer: 2, exp: "Intracellular fluid (ICF) is inside cells; extracellular fluid (ECF) is outside cells." },
+  { id: 8, lecture: "Lecture 2: Introduction", type: "MCQ", q: "The extracellular fluid is divided mainly into:", options: [
+    "A. Plasma and interstitial fluid",
+    "B. Cytoplasm and nucleoplasm",
+    "C. Plasma and intracellular fluid",
+    "D. Lymph and cytosol only"
+  ], answer: 0, exp: "The lecture states ECF = plasma + interstitial fluid." },
+  { id: 9, lecture: "Lecture 2: Introduction", type: "MCQ", q: "Which ion is present at a much higher concentration inside cells than outside, according to the lecture comparison?", options: [
+    "A. Sodium (Na⁺)",
+    "B. Potassium (K⁺)",
+    "C. Chloride (Cl⁻)",
+    "D. Bicarbonate (HCO₃⁻)"
+  ], answer: 1, exp: "The ICF has high K⁺ and the ECF has high Na⁺." },
+  { id: 10, lecture: "Lecture 2: Introduction", type: "MCQ", q: "A molecule moves from a region of higher concentration to lower concentration without using a membrane protein. This is:", options: [
+    "A. Primary active transport",
+    "B. Facilitated diffusion",
+    "C. Simple diffusion",
+    "D. Exocytosis"
+  ], answer: 2, exp: "Simple diffusion is passive and does not require binding to a carrier protein." },
+  { id: 11, lecture: "Lecture 2: Introduction", type: "MCQ", q: "Which feature distinguishes facilitated diffusion from simple diffusion?", options: [
+    "A. It always moves against the gradient",
+    "B. It uses membrane channels or carriers",
+    "C. It requires vesicles to cross the membrane",
+    "D. It directly consumes cellular ATP"
+  ], answer: 1, exp: "Facilitated diffusion uses membrane proteins but remains passive and follows the gradient." },
+  { id: 12, lecture: "Lecture 2: Introduction", type: "MCQ", q: "A carrier-mediated transport rate stops increasing even when solute concentration rises further. The best explanation is:", options: [
+    "A. The membrane has become impermeable to water",
+    "B. The available transport proteins are saturated",
+    "C. The solute has changed into ATP",
+    "D. The concentration gradient has reversed"
+  ], answer: 1, exp: "A limited number of carriers creates a maximum transport rate, called saturation." },
+  { id: 13, lecture: "Lecture 2: Introduction", type: "MCQ", q: "During osmosis, water moves across a selectively permeable membrane toward the side with:", options: [
+    "A. Lower solute concentration",
+    "B. Higher solute concentration",
+    "C. Lower total pressure only",
+    "D. Higher membrane permeability only"
+  ], answer: 1, exp: "Water moves from lower solute concentration toward higher solute concentration when the solute cannot cross." },
+  { id: 14, lecture: "Lecture 2: Introduction", type: "MCQ", q: "What does osmotic pressure represent?", options: [
+    "A. Pressure needed to stop net solvent movement",
+    "B. Pressure produced by active ion pumping",
+    "C. Force needed to open a carrier protein",
+    "D. Pressure caused only by dissolved proteins"
+  ], answer: 0, exp: "Osmotic pressure is the pressure required to prevent solvent migration." },
+  { id: 15, lecture: "Lecture 2: Introduction", type: "MCQ", q: "Which definition is correct?", options: [
+    "A. Osmolarity — osmoles per kilogram of solvent",
+    "B. Osmolality — osmoles per litre of solution",
+    "C. Osmolarity — osmoles per litre of solution",
+    "D. Tonicity — total mass of all dissolved solutes"
+  ], answer: 2, exp: "Osmolarity is osmoles per litre of solution; osmolality is osmoles per kilogram of solvent." },
+  { id: 16, lecture: "Lecture 2: Introduction", type: "MCQ", q: "A red blood cell is placed in a hypotonic solution. What is the expected water movement and volume change?", options: [
+    "A. Water leaves; the cell shrinks",
+    "B. Water enters; the cell swells",
+    "C. No net water movement; volume is fixed",
+    "D. Solute enters; the cell immediately shrinks"
+  ], answer: 1, exp: "A hypotonic solution has lower effective solute concentration, so water enters the cell." },
+  { id: 17, lecture: "Lecture 2: Introduction", type: "True/False", q: "Homeostasis means that physiological variables never change.", options: ["True", "False"], answer: 1, exp: "False — Homeostasis maintains variables within an appropriate range despite continuous change." },
+  { id: 18, lecture: "Lecture 2: Introduction", type: "True/False", q: "Blood clotting is presented as a positive-feedback example.", options: ["True", "False"], answer: 0, exp: "True — Platelet activation promotes further platelet recruitment and clot formation." },
+  { id: 19, lecture: "Lecture 2: Introduction", type: "True/False", q: "Facilitated diffusion requires ATP because it uses a carrier protein.", options: ["True", "False"], answer: 1, exp: "False — It uses channels or carriers but does not require ATP; movement is down the gradient." },
+  { id: 20, lecture: "Lecture 2: Introduction", type: "True/False", q: "A hypotonic solution causes water to move out of a cell.", options: ["True", "False"], answer: 1, exp: "False — Water moves into a cell in a hypotonic solution, causing swelling." },
+
+  // Lecture 3: Neurophysiology (21-40)
+  { id: 21, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "A receptor converts pressure, light or a chemical stimulus into an electrical signal. This conversion is called:", options: [
+    "A. Propagation",
+    "B. Transduction",
+    "C. Repolarization",
+    "D. Summation"
+  ], answer: 1, exp: "Transduction is the conversion of a stimulus into an electrical signal." },
+  { id: 22, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "A stronger pressure stimulus produces a larger receptor potential. How can stimulus intensity then be represented in the nerve?", options: [
+    "A. By increasing action-potential amplitude",
+    "B. By increasing action-potential firing frequency",
+    "C. By making each action potential travel more slowly",
+    "D. By preventing action potentials from reaching threshold"
+  ], answer: 1, exp: "The lecture states that stronger stimuli produce a higher firing rate; action potentials remain all-or-none." },
+  { id: 23, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "A pressure receptor is stimulated. Which event occurs first at the receptor ending?", options: [
+    "A. K⁺ channels close at every node",
+    "B. Mechanical deformation opens stretch-activated channels",
+    "C. A muscle fibre releases calcium",
+    "D. A neurotransmitter crosses the synapse"
+  ], answer: 1, exp: "Pressure deforms the receptor membrane and opens mechanically activated channels, allowing depolarization." },
+  { id: 24, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "Which receptor type reports body position and movement?", options: [
+    "A. Nociceptor",
+    "B. Proprioceptor",
+    "C. Photoreceptor",
+    "D. Osmoreceptor"
+  ], answer: 1, exp: "Proprioceptors in muscles, tendons and joints provide information about position and movement." },
+  { id: 25, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "A receptor in the carotid artery detects changes in blood pressure. It is a:", options: [
+    "A. Baroreceptor",
+    "B. Photoreceptor",
+    "C. Nociceptor",
+    "D. Thermoreceptor"
+  ], answer: 0, exp: "Baroreceptors detect pressure changes in the carotid arteries and aortic arch." },
+  { id: 26, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "Which sequence correctly represents the early stages of sensory signalling?", options: [
+    "A. Perception → receptor → stimulus",
+    "B. Stimulus → receptor → transduction → action potential → propagation",
+    "C. Synapse → perception → transduction",
+    "D. Propagation → stimulus → receptor → perception"
+  ], answer: 1, exp: "A receptor transduces the stimulus, generates an action potential and propagates it toward the CNS." },
+  { id: 27, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "The action potential is initiated most readily at the axon hillock/initial segment because this region has:", options: [
+    "A. A high density of voltage-gated Na⁺ channels",
+    "B. No ion channels in its membrane",
+    "C. Only mechanically gated K⁺ channels",
+    "D. A thick layer of extracellular fluid"
+  ], answer: 0, exp: "The trigger zone has a high density of voltage-gated Na⁺ channels and integrates incoming inputs." },
+  { id: 28, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "A neuron receives several excitatory inputs. An action potential begins when their summed effect:", options: [
+    "A. Makes the membrane more negative than rest",
+    "B. Exceeds the threshold at the trigger zone",
+    "C. Closes all voltage-gated Na⁺ channels",
+    "D. Reduces the firing rate to zero"
+  ], answer: 1, exp: "If summed excitatory input reaches threshold, voltage-gated Na⁺ channels open and the AP begins." },
+  { id: 29, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "During the rising phase of a typical neuronal action potential, the main ionic event is:", options: [
+    "A. K⁺ leaves through open channels",
+    "B. Na⁺ enters through voltage-gated channels",
+    "C. Cl⁻ leaves through carrier proteins",
+    "D. Ca²⁺ is pumped out by the Na⁺/K⁺ pump"
+  ], answer: 1, exp: "Opening of voltage-gated Na⁺ channels causes Na⁺ influx and rapid depolarization." },
+  { id: 30, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "What mainly drives the falling phase of the action potential?", options: [
+    "A. Na⁺ channels remain open indefinitely",
+    "B. Na⁺ channels inactivate and K⁺ channels open",
+    "C. All K⁺ channels close at once",
+    "D. The membrane becomes impermeable to every ion"
+  ], answer: 1, exp: "Na⁺ channel inactivation and increased K⁺ permeability return the membrane toward rest." },
+  { id: 31, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "The undershoot occurs because:", options: [
+    "A. K⁺ permeability remains elevated briefly",
+    "B. Na⁺ permeability stays at its peak",
+    "C. All ion gradients disappear",
+    "D. The membrane has no capacitance"
+  ], answer: 0, exp: "Extra K⁺ channels remain open after repolarization, so the membrane becomes more negative than resting." },
+  { id: 32, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "During the absolute refractory period, a second action potential cannot be generated because:", options: [
+    "A. All K⁺ ions have left the cell",
+    "B. Voltage-gated Na⁺ channels are inactivated",
+    "C. The axon has lost all ATP",
+    "D. The receptor potential is always positive"
+  ], answer: 1, exp: "Inactivated Na⁺ channels cannot reopen immediately, regardless of stimulus strength." },
+  { id: 33, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "A neuron is in its relative refractory period. What is true?", options: [
+    "A. No stimulus can ever trigger an AP",
+    "B. A stronger-than-usual stimulus may trigger an AP",
+    "C. The membrane is permanently depolarized",
+    "D. The axon cannot conduct any signal again"
+  ], answer: 1, exp: "The membrane is hyperpolarized and Na⁺ channels are recovering, so a stronger stimulus is required." },
+  { id: 34, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "Which property explains why an action potential does not get smaller as it travels along an axon?", options: [
+    "A. Passive decay",
+    "B. Regeneration in adjacent membrane regions",
+    "C. Loss of all Na⁺ channels",
+    "D. Continuous synaptic release"
+  ], answer: 1, exp: "Local currents bring adjacent regions to threshold, regenerating the AP without attenuation." },
+  { id: 35, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "Which connective-tissue layer surrounds an individual axon in a peripheral nerve?", options: [
+    "A. Epineurium",
+    "B. Perineurium",
+    "C. Endoneurium",
+    "D. Myelin sheath"
+  ], answer: 2, exp: "Endoneurium surrounds each axon; perineurium surrounds fascicles; epineurium surrounds the whole nerve." },
+  { id: 36, lecture: "Lecture 3: Neurophysiology", type: "MCQ", q: "In a myelinated axon, the action potential is regenerated mainly at:", options: [
+    "A. The internodal myelin itself",
+    "B. Nodes of Ranvier",
+    "C. The connective tissue outside the nerve",
+    "D. The centre of each Schwann cell"
+  ], answer: 1, exp: "Voltage-gated Na⁺ channels are concentrated at nodes, producing saltatory conduction." },
+  { id: 37, lecture: "Lecture 3: Neurophysiology", type: "True/False", q: "Action potentials have a fixed amplitude once threshold is reached.", options: ["True", "False"], answer: 0, exp: "True — The action potential is an all-or-none event with fixed amplitude and duration." },
+  { id: 38, lecture: "Lecture 3: Neurophysiology", type: "True/False", q: "A stronger stimulus normally produces a larger action-potential amplitude in one axon.", options: ["True", "False"], answer: 1, exp: "False — Stronger stimuli increase firing frequency, not the amplitude of each AP." },
+  { id: 39, lecture: "Lecture 3: Neurophysiology", type: "True/False", q: "Afferent fibres carry information toward the CNS.", options: ["True", "False"], answer: 0, exp: "True — Afferent means toward the central nervous system." },
+  { id: 40, lecture: "Lecture 3: Neurophysiology", type: "True/False", q: "Myelinated axons conduct by continuous propagation along every part of the membrane.", options: ["True", "False"], answer: 1, exp: "False — Myelinated axons use saltatory conduction between nodes of Ranvier." },
+
+  // Lecture 4: Nervous System (41-60)
+  { id: 41, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "Which ion is the main positively charged ion outside the cell in the lecture's basic electrophysiology description?", options: [
+    "A. Potassium (K⁺)",
+    "B. Sodium (Na⁺)",
+    "C. Magnesium (Mg²⁺)",
+    "D. Protein anions"
+  ], answer: 1, exp: "The lecture identifies Na⁺ as the main extracellular positive ion." },
+  { id: 42, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "Which ion is more concentrated inside the cell?", options: [
+    "A. Sodium (Na⁺)",
+    "B. Potassium (K⁺)",
+    "C. Calcium (Ca²⁺)",
+    "D. Chloride (Cl⁻)"
+  ], answer: 1, exp: "Intracellular fluid contains much more K⁺ than extracellular fluid." },
+  { id: 43, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "The Nernst equation is used to calculate:", options: [
+    "A. The equilibrium potential for a particular ion",
+    "B. The total number of neurons in a nerve",
+    "C. The speed of blood flow",
+    "D. The capacitance of a whole organ"
+  ], answer: 0, exp: "Nernst potential depends on the concentration ratio and the ion's valence." },
+  { id: 44, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "When applying the Nernst equation to Ca²⁺, the constant for a monovalent ion must be:", options: [
+    "A. Multiplied by two",
+    "B. Divided by the ion valence",
+    "C. Set equal to zero",
+    "D. Replaced by membrane capacitance"
+  ], answer: 1, exp: "For an ion with valence other than 1, the constant is divided by z (here z = +2)." },
+  { id: 45, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "In the Goldman equation described in the lecture, which factors help determine resting membrane potential?", options: [
+    "A. Ion concentrations and relative membrane permeabilities",
+    "B. Only cell size and axon length",
+    "C. Only ATP concentration and temperature",
+    "D. Only the number of synapses"
+  ], answer: 0, exp: "Goldman's equation accounts for concentrations and relative permeabilities of ions such as K⁺ and Na⁺." },
+  { id: 46, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "At rest, the membrane is much more permeable to K⁺ than to Na⁺. The resting potential is therefore:", options: [
+    "A. Closer to the K⁺ equilibrium potential",
+    "B. Closer to the Na⁺ equilibrium potential",
+    "C. Always exactly zero",
+    "D. Independent of ion concentrations"
+  ], answer: 0, exp: "A larger K⁺ permeability weights the resting potential more strongly toward E_K." },
+  { id: 47, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "At steady-state resting membrane potential, the total current across the membrane must be:", options: [
+    "A. Maximum",
+    "B. Zero",
+    "C. Equal to sodium current only",
+    "D. Equal to potassium concentration"
+  ], answer: 1, exp: "If total membrane current were not zero, membrane potential would continue changing." },
+  { id: 48, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "The chord conductance explanation describes resting membrane potential as:", options: [
+    "A. The conductance-weighted average of ion equilibrium potentials",
+    "B. The sum of all intracellular ion concentrations",
+    "C. The voltage produced by ATP hydrolysis alone",
+    "D. The average of the cell's length and radius"
+  ], answer: 0, exp: "Each ion's conductance weights its equilibrium potential in determining E_m." },
+  { id: 49, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "Voltage-gated ion channels respond directly to:", options: [
+    "A. Changes in membrane potential",
+    "B. Changes in cell colour",
+    "C. Mechanical force on bone",
+    "D. The amount of oxygen in plasma only"
+  ], answer: 0, exp: "Voltage-gated channels open or close in response to changes in membrane voltage." },
+  { id: 50, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "A sudden increase in Na⁺ permeability causes membrane potential to move toward:", options: [
+    "A. The K⁺ equilibrium potential",
+    "B. The Na⁺ equilibrium potential",
+    "C. Zero in every circumstance",
+    "D. The chloride concentration"
+  ], answer: 1, exp: "Greater Na⁺ permeability pulls membrane potential toward E_Na." },
+  { id: 51, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "During depolarization, opening of additional voltage-gated Na⁺ channels creates:", options: [
+    "A. Positive feedback",
+    "B. Negative feedback",
+    "C. No feedback",
+    "D. Only mechanical feedback"
+  ], answer: 0, exp: "More depolarization opens more Na⁺ channels, causing further Na⁺ influx and depolarization." },
+  { id: 52, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "Why does the action potential eventually repolarize after the rising phase?", options: [
+    "A. Na⁺ channels inactivate while K⁺ permeability increases",
+    "B. Na⁺ channels remain fully open",
+    "C. The cell loses its membrane",
+    "D. The concentration gradients instantly vanish"
+  ], answer: 0, exp: "The delayed closure/inactivation of Na⁺ channels and opening of K⁺ channels drive repolarization." },
+  { id: 53, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "In the lecture's gate description, which Na⁺ channel gate opens rapidly during depolarization?", options: [
+    "A. h gate",
+    "B. m gate",
+    "C. n gate",
+    "D. The K⁺ gate"
+  ], answer: 1, exp: "The m gate opens rapidly; the h gate closes more slowly." },
+  { id: 54, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "The h gate is initially open at rest. What happens to it during depolarization?", options: [
+    "A. It closes more slowly than the m gate opens",
+    "B. It opens faster than the m gate",
+    "C. It becomes a K⁺ channel",
+    "D. It remains open permanently"
+  ], answer: 0, exp: "The timing difference between rapid m-gate opening and slower h-gate closure permits the rising phase." },
+  { id: 55, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "Why can a new action potential be temporarily impossible even after membrane voltage returns near rest?", options: [
+    "A. Na⁺ channel h gates may still be shut",
+    "B. The axon has permanently lost K⁺",
+    "C. The membrane has become a perfect insulator",
+    "D. The stimulus receptor has disappeared"
+  ], answer: 0, exp: "Inactivated Na⁺ channels need time to recover before another AP can be generated." },
+  { id: 56, lecture: "Lecture 4: Nervous System", type: "MCQ", q: "The lecture places the typical threshold approximately:", options: [
+    "A. 10–20 mV below resting potential",
+    "B. 10–20 mV above resting potential",
+    "C. Exactly at 0 mV",
+    "D. At the K⁺ equilibrium potential in every neuron"
+  ], answer: 1, exp: "Threshold is usually around 10–20 mV above the resting value." },
+  { id: 57, lecture: "Lecture 4: Nervous System", type: "True/False", q: "The inside of a resting cell has a slight excess of negative charge relative to the outside.", options: ["True", "False"], answer: 0, exp: "True — This is the charge separation associated with the resting membrane potential." },
+  { id: 58, lecture: "Lecture 4: Nervous System", type: "True/False", q: "Increasing Na⁺ permeability tends to move membrane potential toward the K⁺ equilibrium potential.", options: ["True", "False"], answer: 1, exp: "False — It moves membrane potential toward the Na⁺ equilibrium potential." },
+  { id: 59, lecture: "Lecture 4: Nervous System", type: "True/False", q: "The action potential is an all-or-none event once threshold is reached.", options: ["True", "False"], answer: 0, exp: "True — The positive-feedback opening of voltage-gated Na⁺ channels produces a full AP." },
+  { id: 60, lecture: "Lecture 4: Nervous System", type: "True/False", q: "The cable properties of a nerve refer to the active processes that generate the action potential.", options: ["True", "False"], answer: 1, exp: "False — The lecture explicitly describes cable properties as passive/electrotonic, not active AP-generating properties." },
+
+  // Lecture 5A: Neurophysiology (61-74)
+  { id: 61, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "Which division of the peripheral nervous system controls involuntary functions such as heart rate and sweating?", options: [
+    "A. Somatic nervous system",
+    "B. Autonomic nervous system",
+    "C. Sensory receptor system",
+    "D. Central motor cortex"
+  ], answer: 1, exp: "The ANS regulates involuntary functions and supports homeostasis." },
+  { id: 62, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "A person is under acute stress. Which autonomic response is expected?", options: [
+    "A. Lower heart rate and increased digestion",
+    "B. Higher heart rate and dilated airways",
+    "C. Reduced blood flow to muscles",
+    "D. Increased digestive activity only"
+  ], answer: 1, exp: "Sympathetic activation prepares the body for rapid action: heart rate rises, airways dilate and blood flow is redirected toward muscles." },
+  { id: 63, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "Which response is most consistent with parasympathetic activity?", options: [
+    "A. Increased heart rate",
+    "B. Airway dilation",
+    "C. Stimulated digestive activity",
+    "D. Redirected blood flow toward skeletal muscles"
+  ], answer: 2, exp: "Parasympathetic activity supports rest, recovery and energy conservation, including digestive activity." },
+  { id: 64, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "A clinician wants to assess beat-to-beat variation and autonomic balance. Which measure is most appropriate?", options: [
+    "A. EMG",
+    "B. HRV",
+    "C. EEG",
+    "D. NCS"
+  ], answer: 1, exp: "Heart rate variability (HRV) measures beat-to-beat variation and provides information about autonomic balance." },
+  { id: 65, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "Galvanic skin response mainly measures:", options: [
+    "A. Skin conductance associated with sweating",
+    "B. Electrical activity from the cerebral cortex",
+    "C. Speed of impulses along a motor nerve",
+    "D. Muscle fibre cross-sectional area"
+  ], answer: 0, exp: "GSR measures skin conductance and can indicate sympathetic activation." },
+  { id: 66, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "QSART/TST are used to assess:", options: [
+    "A. Sweat volume or pattern",
+    "B. Brain magnetic fields",
+    "C. Muscle twitch force",
+    "D. Blood oxygen saturation"
+  ], answer: 0, exp: "The lecture lists QSART/TST as sweat tests assessing sympathetic cholinergic control." },
+  { id: 67, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "A tap to the patellar tendon stretches the quadriceps. Which sequence best describes the knee-jerk reflex?", options: [
+    "A. Sensory signal enters spinal cord → integration → motor response",
+    "B. Motor signal enters brain → conscious decision → sensory response",
+    "C. Sweat gland activation → sensory signal → muscle relaxation",
+    "D. Cerebellar signal → no spinal involvement → knee flexion"
+  ], answer: 0, exp: "The sensory neuron carries the stretch signal into the spinal cord, where rapid integration leads to motor activation of quadriceps." },
+  { id: 68, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "Which statement about spinal reflexes is correct?", options: [
+    "A. They always require conscious processing first",
+    "B. They can occur without conscious control from the brain",
+    "C. They occur only in smooth muscle",
+    "D. They do not contribute to posture"
+  ], answer: 1, exp: "Spinal reflexes provide rapid protective responses and contribute to posture, balance and muscle tone." },
+  { id: 69, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "Which brain region is most directly associated with coordinating movement and balance?", options: [
+    "A. Cerebrum",
+    "B. Cerebellum",
+    "C. Brainstem",
+    "D. Spinal nerve"
+  ], answer: 1, exp: "The cerebellum coordinates movement and contributes to balance, posture and motor learning." },
+  { id: 70, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "Which brain region supports vital automatic functions such as breathing and cardiovascular control?", options: [
+    "A. Cerebellum",
+    "B. Brainstem",
+    "C. Occipital cortex",
+    "D. Hippocampus"
+  ], answer: 1, exp: "The brainstem supports vital automatic functions including breathing and cardiovascular control." },
+  { id: 71, lecture: "Lecture 5A: Neurophysiology", type: "MCQ", q: "After repeated practice, relevant neural pathways become stronger. This illustrates:", options: [
+    "A. Neural plasticity",
+    "B. Refractory period",
+    "C. Saltatory conduction",
+    "D. Osmosis"
+  ], answer: 0, exp: "Neural plasticity is the nervous system's ability to change and adapt; repetition can strengthen pathways." },
+  { id: 72, lecture: "Lecture 5A: Neurophysiology", type: "True/False", q: "The sympathetic branch is commonly described as 'fight or flight'.", options: ["True", "False"], answer: 0, exp: "True — It prepares the body for stress and rapid action." },
+  { id: 73, lecture: "Lecture 5A: Neurophysiology", type: "True/False", q: "A spinal reflex always requires a conscious decision by the cerebrum before the motor response.", options: ["True", "False"], answer: 1, exp: "False — Spinal reflexes can be integrated in the spinal cord without conscious control." },
+  { id: 74, lecture: "Lecture 5A: Neurophysiology", type: "True/False", q: "EEG and MEG measure exactly the same physical signal.", options: ["True", "False"], answer: 1, exp: "False — EEG records electrical activity; MEG records associated magnetic fields." },
+
+  // Lecture 5B/6: Muscle Physiology (75-100)
+  { id: 75, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "Which muscle type is voluntary, striated and mainly associated with movement at joints?", options: [
+    "A. Smooth muscle",
+    "B. Cardiac muscle",
+    "C. Skeletal muscle",
+    "D. Visceral muscle only"
+  ], answer: 2, exp: "Skeletal muscle is voluntary and striated, and it produces movement and support." },
+  { id: 76, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "Which description correctly matches smooth muscle?", options: [
+    "A. Voluntary and striated",
+    "B. Involuntary and non-striated",
+    "C. Involuntary and striated",
+    "D. Voluntary and non-striated"
+  ], answer: 1, exp: "Smooth muscle is involuntary and non-striated, and is found in organs." },
+  { id: 77, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "The muscle that actively produces the intended movement is the:", options: [
+    "A. Antagonist",
+    "B. Stabilizer",
+    "C. Agonist",
+    "D. Synergist"
+  ], answer: 2, exp: "The agonist is the prime mover for the intended action." },
+  { id: 78, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "A muscle that produces the opposite joint action to the prime mover is the:", options: [
+    "A. Synergist",
+    "B. Antagonist",
+    "C. Stabilizer",
+    "D. Fixator only"
+  ], answer: 1, exp: "The antagonist opposes the action produced by the agonist." },
+  { id: 79, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "A muscle assists the agonist and/or reduces unwanted movement. It is a:", options: [
+    "A. Synergist",
+    "B. Antagonist",
+    "C. Receptor",
+    "D. Motor unit"
+  ], answer: 0, exp: "A synergist assists the agonist and can reduce unwanted movement." },
+  { id: 80, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "What is the smallest structural and functional unit of a muscle fibre?", options: [
+    "A. Fascicle",
+    "B. Sarcomere",
+    "C. Tendon",
+    "D. Motor neuron"
+  ], answer: 1, exp: "The sarcomere is the force-producing structural and functional unit." },
+  { id: 81, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "During skeletal muscle contraction, the thin filaments:", options: [
+    "A. Become shorter themselves",
+    "B. Slide closer together between thick filaments",
+    "C. Disappear from the sarcomere",
+    "D. Turn into thick filaments"
+  ], answer: 1, exp: "The sliding-filament mechanism moves actin toward the centre; the filaments themselves do not shorten." },
+  { id: 82, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "Which event exposes attachment sites on actin during contraction?", options: [
+    "A. Calcium release",
+    "B. Sodium removal from blood",
+    "C. ATP breakdown in the tendon",
+    "D. Myelin formation"
+  ], answer: 0, exp: "Calcium is released from storage sites and exposes actin binding sites." },
+  { id: 83, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "What role does ATP play in the sliding-filament mechanism?", options: [
+    "A. It powers cross-bridge activity",
+    "B. It creates the sarcomere membrane",
+    "C. It permanently binds actin to myosin",
+    "D. It prevents calcium release"
+  ], answer: 0, exp: "Myosin cross-bridges use ATP during the cycle that produces the power stroke." },
+  { id: 84, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "A person holds a weight still without joint rotation. The contraction is:", options: [
+    "A. Concentric",
+    "B. Eccentric",
+    "C. Isometric",
+    "D. Isokinetic"
+  ], answer: 2, exp: "In an isometric contraction, muscle length remains constant while tension resists the load." },
+  { id: 85, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "When a muscle shortens while producing enough tension to overcome a load, the contraction is:", options: [
+    "A. Eccentric",
+    "B. Concentric",
+    "C. Isometric",
+    "D. Passive"
+  ], answer: 1, exp: "Concentric contraction involves active shortening and positive mechanical work." },
+  { id: 86, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "A muscle actively lengthens to control or slow a movement. This is:", options: [
+    "A. Concentric contraction",
+    "B. Eccentric contraction",
+    "C. Isometric contraction",
+    "D. Passive stretch only"
+  ], answer: 1, exp: "Eccentric contraction is active lengthening and is used to control or decelerate movement." },
+  { id: 87, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "Which factor increases a muscle's force capacity according to the lecture?", options: [
+    "A. Smaller physiological cross-sectional area",
+    "B. Greater cross-sectional area",
+    "C. Shorter moment arm in every position",
+    "D. Reduced motor-unit recruitment"
+  ], answer: 1, exp: "Greater cross-sectional area allows more actin-myosin interactions and greater force capacity." },
+  { id: 88, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "The moment arm is the:", options: [
+    "A. Total length of the muscle fibre",
+    "B. Perpendicular distance from line of action to joint centre",
+    "C. Distance between two Z lines",
+    "D. Angle between actin and myosin"
+  ], answer: 1, exp: "Moment arm is the perpendicular distance between the muscle line of action and the joint's centre of rotation." },
+  { id: 89, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "If muscle force stays the same but its moment arm increases, the joint moment will:", options: [
+    "A. Decrease",
+    "B. Increase",
+    "C. Become zero",
+    "D. Remain unrelated to the moment arm"
+  ], answer: 1, exp: "Joint moment equals force multiplied by the perpendicular moment arm." },
+  { id: 90, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "Which statement about pennate muscle architecture is most accurate?", options: [
+    "A. Fibres run exactly along the muscle's line of action",
+    "B. Fibres attach at an angle to the direction of muscle action",
+    "C. Fibres contain no actin or myosin",
+    "D. Pennation prevents force transmission"
+  ], answer: 1, exp: "Pennate fibres are angled; this arrangement allows more fibres to fit, though each fibre's force is projected along the tendon axis." },
+  { id: 91, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "As pennation angle increases, what happens to the component of each fibre's force transmitted along the tendon axis?", options: [
+    "A. It increases without limit",
+    "B. It decreases",
+    "C. It becomes independent of the angle",
+    "D. It reverses direction"
+  ], answer: 1, exp: "The tendon-directed component is reduced as the angle increases, although more fibres may contribute." },
+  { id: 92, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "At which muscle length is active force generally greatest?", options: [
+    "A. At the optimal/resting length",
+    "B. At the shortest possible length",
+    "C. At the greatest possible stretch",
+    "D. At any length equally"
+  ], answer: 0, exp: "Optimal overlap between actin and myosin supports maximal cross-bridge interaction." },
+  { id: 93, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "Why does active force fall when a sarcomere is stretched beyond its optimal length?", options: [
+    "A. There is less overlap between actin and myosin",
+    "B. All myosin filaments disappear",
+    "C. The Z lines fuse together",
+    "D. Calcium cannot exist in the cell"
+  ], answer: 0, exp: "At long lengths, fewer actin binding sites overlap with myosin cross-bridges." },
+  { id: 94, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "What happens to passive force as muscle length increases and elastic structures are stretched?", options: [
+    "A. It generally increases",
+    "B. It always becomes zero",
+    "C. It changes into action-potential amplitude",
+    "D. It decreases to a fixed negative value"
+  ], answer: 0, exp: "Stretching elastic structures creates increasing passive tension." },
+  { id: 95, lecture: "Lecture 5B/6: Muscle Physiology", type: "MCQ", q: "During concentric contraction, what is the general relationship between force and shortening velocity?", options: [
+    "A. Velocity increases as force increases",
+    "B. Velocity decreases as force increases",
+    "C. Velocity is always constant",
+    "D. Force is independent of velocity"
+  ], answer: 1, exp: "The force-velocity relationship is inverse for concentric contractions." },
+  { id: 96, lecture: "Lecture 5B/6: Muscle Physiology", type: "True/False", q: "A muscle can actively push on its attachments to bones.", options: ["True", "False"], answer: 1, exp: "False — The lecture states that muscles pull but cannot push; external forces can stretch them." },
+  { id: 97, lecture: "Lecture 5B/6: Muscle Physiology", type: "True/False", q: "In an isometric contraction, muscle length remains constant while tension is developed.", options: ["True", "False"], answer: 0, exp: "True — Isometric effort produces no motion of the involved body segments." },
+  { id: 98, lecture: "Lecture 5B/6: Muscle Physiology", type: "True/False", q: "The A-band width decreases as a sarcomere shortens.", options: ["True", "False"], answer: 1, exp: "False — The A band remains constant; the I band and H zone become shorter." },
+  { id: 99, lecture: "Lecture 5B/6: Muscle Physiology", type: "True/False", q: "Fast contractions can occur only with low loads, while higher loads generally produce slower shortening.", options: ["True", "False"], answer: 0, exp: "True — This follows the inverse force-velocity relationship." },
+  { id: 100, lecture: "Lecture 5B/6: Muscle Physiology", type: "True/False", q: "The latent period occurs because cross-bridge activity begins before the action potential.", options: ["True", "False"], answer: 1, exp: "False — The action potential is completed before the contractile apparatus becomes operational." }
+];
+
+const LECTURES = [
+  "All Lectures",
+  "Lecture 2: Introduction",
+  "Lecture 3: Neurophysiology",
+  "Lecture 4: Nervous System",
+  "Lecture 5A: Neurophysiology",
+  "Lecture 5B/6: Muscle Physiology"
+];
+
+let state = {
+  mode: "study", // 'study' | 'exam'
+  examSubmitted: false,
+  revealAll: false,
+  selectedLecture: "All Lectures",
+  userAnswers: {} // { [questionId]: optionIndex }
+};
+
+function init() {
+  renderTabs();
+  renderNavGrid();
+  renderQuestions();
+  updateProgress();
+}
+
+function renderTabs() {
+  const container = document.getElementById("lectureTabs");
+  container.innerHTML = LECTURES.map(lec => {
+    const count = lec === "All Lectures" ? QUESTIONS.length : QUESTIONS.filter(q => q.lecture === lec).length;
+    const active = state.selectedLecture === lec ? "active" : "";
+    return `<button class="tab ${active}" onclick="selectLecture('${lec.replace(/'/g, "\'")}')">${lec} (${count})</button>`;
+  }).join("");
+}
+
+function selectLecture(lec) {
+  state.selectedLecture = lec;
+  renderTabs();
+  renderQuestions();
+}
+
+function setMode(newMode) {
+  state.mode = newMode;
+  state.examSubmitted = false;
+  state.revealAll = false;
+  document.getElementById("btnStudyMode").classList.toggle("active", newMode === "study");
+  document.getElementById("btnExamMode").classList.toggle("active", newMode === "exam");
+  document.getElementById("btnSubmitExam").style.display = newMode === "exam" ? "inline-block" : "none";
+  document.getElementById("btnRevealAll").style.display = newMode === "study" ? "inline-block" : "none";
+  document.getElementById("btnRevealAll").textContent = "Show All Answers";
+  document.getElementById("scoreBanner").classList.remove("visible");
+  renderNavGrid();
+  renderQuestions();
+}
+
+function toggleRevealAll() {
+  state.revealAll = !state.revealAll;
+  document.getElementById("btnRevealAll").textContent = state.revealAll ? "Hide Answers" : "Show All Answers";
+  renderQuestions();
+}
+
+function chooseOption(qId, optIdx) {
+  if (state.mode === "exam" && state.examSubmitted) return;
+  state.userAnswers[qId] = optIdx;
+  updateProgress();
+  renderNavGrid();
+  renderQuestions();
+}
+
+function submitExam() {
+  const answeredCount = Object.keys(state.userAnswers).length;
+  if (answeredCount < QUESTIONS.length) {
+    const proceed = confirm(`You have answered ${answeredCount} of ${QUESTIONS.length} questions. Submit exam anyway?`);
+    if (!proceed) return;
+  }
+  state.examSubmitted = true;
+  showExamResults();
+  renderNavGrid();
+  renderQuestions();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showExamResults() {
+  let totalCorrect = 0;
+  const byLecture = {};
+  LECTURES.slice(1).forEach(l => byLecture[l] = { correct: 0, total: 0 });
+
+  QUESTIONS.forEach(q => {
+    byLecture[q.lecture].total++;
+    if (state.userAnswers[q.id] === q.answer) {
+      totalCorrect++;
+      byLecture[q.lecture].correct++;
+    }
+  });
+
+  const pct = Math.round((totalCorrect / QUESTIONS.length) * 100);
+  document.getElementById("scoreValue").textContent = `${totalCorrect} / ${QUESTIONS.length} (${pct}%)`;
+  document.getElementById("breakdownGrid").innerHTML = Object.entries(byLecture).map(([lec, stats]) => {
+    const lPct = Math.round((stats.correct / stats.total) * 100);
+    return `<div class="breakdown-item"><strong>${lec.split(":")[0]}</strong>${stats.correct}/${stats.total} correct (${lPct}%)</div>`;
+  }).join("");
+  document.getElementById("scoreBanner").classList.add("visible");
+}
+
+function filterWrongOnly() {
+  state.selectedLecture = "All Lectures";
+  document.getElementById("statusFilter").value = "wrong";
+  renderTabs();
+  renderQuestions();
+}
+
+function resetQuiz() {
+  state.userAnswers = {};
+  state.examSubmitted = false;
+  state.revealAll = false;
+  document.getElementById("statusFilter").value = "all";
+  document.getElementById("searchInput").value = "";
+  document.getElementById("btnRevealAll").textContent = "Show All Answers";
+  document.getElementById("scoreBanner").classList.remove("visible");
+  updateProgress();
+  renderNavGrid();
+  renderQuestions();
+}
+
+function updateProgress() {
+  const count = Object.keys(state.userAnswers).length;
+  document.getElementById("progressText").textContent = `${count} / ${QUESTIONS.length}`;
+  document.getElementById("progressFill").style.width = `${(count / QUESTIONS.length) * 100}%`;
+}
+
+function renderNavGrid() {
+  const grid = document.getElementById("navGrid");
+  const showFeedback = (state.mode === "study") || (state.mode === "exam" && state.examSubmitted);
+
+  grid.innerHTML = QUESTIONS.map(q => {
+    const userAns = state.userAnswers[q.id];
+    let cls = "nav-dot";
+    if (userAns !== undefined) {
+      if (showFeedback) {
+        cls += userAns === q.answer ? " correct" : " wrong";
+      } else {
+        cls += " answered";
+      }
+    }
+    return `<button class="${cls}" onclick="jumpToQuestion(${q.id})">${q.id}</button>`;
+  }).join("");
+}
+
+function jumpToQuestion(id) {
+  const q = QUESTIONS.find(item => item.id === id);
+  if (state.selectedLecture !== "All Lectures" && q.lecture !== state.selectedLecture) {
+    state.selectedLecture = "All Lectures";
+    renderTabs();
+  }
+  if (document.getElementById("statusFilter").value !== "all" || document.getElementById("searchInput").value !== "") {
+    document.getElementById("statusFilter").value = "all";
+    document.getElementById("searchInput").value = "";
+  }
+  renderQuestions();
+  setTimeout(() => {
+    const el = document.getElementById(`q-card-${id}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 40);
+}
+
+function renderQuestions() {
+  const container = document.getElementById("questionsContainer");
+  const query = document.getElementById("searchInput").value.trim().toLowerCase();
+  const statusFilter = document.getElementById("statusFilter").value;
+  const showFeedbackGlobal = (state.mode === "study") || (state.mode === "exam" && state.examSubmitted) || state.revealAll;
+
+  const filtered = QUESTIONS.filter(q => {
+    if (state.selectedLecture !== "All Lectures" && q.lecture !== state.selectedLecture) return false;
+
+    const userAns = state.userAnswers[q.id];
+    if (statusFilter === "unanswered" && userAns !== undefined) return false;
+    if (statusFilter === "wrong" && (userAns === undefined || userAns === q.answer)) return false;
+    if (statusFilter === "correct" && userAns !== q.answer) return false;
+
+    if (query) {
+      const matchId = String(q.id) === query;
+      const matchText = q.q.toLowerCase().includes(query) || q.options.some(o => o.toLowerCase().includes(query));
+      if (!matchId && !matchText) return false;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="question-card" style="text-align:center;color:var(--text-muted);padding:34px;">No questions match your current filter.</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(q => {
+    const userAns = state.userAnswers[q.id];
+    const hasAnswered = userAns !== undefined;
+    const revealThis = (state.mode === "study" && hasAnswered) || (state.mode === "exam" && state.examSubmitted) || state.revealAll;
+
+    const optionsHtml = q.options.map((opt, idx) => {
+      let cls = "option-btn";
+      if (state.mode === "exam" && state.examSubmitted) cls += " locked";
+
+      if (revealThis) {
+        if (idx === q.answer) {
+          cls += " correct";
+        } else if (hasAnswered && idx === userAns && userAns !== q.answer) {
+          cls += " wrong";
+        }
+      } else if (hasAnswered && idx === userAns) {
+        cls += " selected";
+      }
+
+      return `<button class="${cls}" onclick="chooseOption(${q.id}, ${idx})">
+        <span>${opt}</span>
+      </button>`;
+    }).join("");
+
+    let expCls = "explanation";
+    if (revealThis) {
+      expCls += " visible";
+      if (hasAnswered) {
+        expCls += userAns === q.answer ? " exp-correct" : " exp-wrong";
+      }
+    }
+
+    const correctLabel = q.options[q.answer];
+
+    return `
+      <div class="question-card" id="q-card-${q.id}">
+        <div class="q-meta">
+          <span class="badge">Q${q.id}</span>
+          <span class="badge badge-type">${q.type}</span>
+          <span style="font-size:0.8rem;color:var(--text-muted);">${q.lecture}</span>
+        </div>
+        <div class="q-text">${q.q}</div>
+        <div class="options">${optionsHtml}</div>
+        <div class="${expCls}">
+          <strong>Correct Answer:</strong> ${correctLabel}<br>
+          <span style="color:var(--text-muted);">${q.exp}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+init();
+</script>
+</body>
+</html>
